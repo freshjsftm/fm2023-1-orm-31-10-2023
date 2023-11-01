@@ -35,23 +35,32 @@ module.exports.updateUserStatic = async (req, res, next) => {
     const {
       body,
       params: { idUser },
-      query:{male}
+      query: { male },
     } = req;
     const [count, userUpdated] = await User.update(body, {
       //where: { id: idUser },
       where: { isMale: male },
-      returning: true
+      returning: true,
     });
-    if(count === 0) {
-      return res.status(204).send({data: 'not found'})
+    if (count === 0) {
+      return res.status(204).send({ data: 'not found' });
     }
-    res.status(200).send({data: userUpdated})
+    res.status(200).send({ data: userUpdated });
   } catch (error) {
     next(error);
   }
 };
+
 module.exports.updateUserInstance = async (req, res, next) => {
   try {
+    const {
+      body,
+      params: { idUser },
+    } = req;
+    const userInstance = await User.findByPk(idUser);
+    const updatedUserInstance = await userInstance.update(body);
+    updatedUserInstance.password = undefined;
+    res.status(200).send({ data: updatedUserInstance });
   } catch (error) {
     next(error);
   }
