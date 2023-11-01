@@ -30,6 +30,33 @@ module.exports.getAllUsers = async (req, res, next) => {
   }
 };
 
+module.exports.updateUserStatic = async (req, res, next) => {
+  try {
+    const {
+      body,
+      params: { idUser },
+      query:{male}
+    } = req;
+    const [count, userUpdated] = await User.update(body, {
+      //where: { id: idUser },
+      where: { isMale: male },
+      returning: true
+    });
+    if(count === 0) {
+      return res.status(204).send({data: 'not found'})
+    }
+    res.status(200).send({data: userUpdated})
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports.updateUserInstance = async (req, res, next) => {
+  try {
+  } catch (error) {
+    next(error);
+  }
+};
+
 // module.exports.createUser = async (req, res, next) => {
 //   try {
 //   } catch (error) {

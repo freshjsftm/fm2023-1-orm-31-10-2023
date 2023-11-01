@@ -10,4 +10,6 @@ const router = Router();
 router.post('/users', UserController.createUser);
 router.get('/users', UserController.getAllUsers);
 
+router.patch('/users', UserController.updateUserStatic);
+
 module.exports = router;
