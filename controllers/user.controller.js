@@ -58,9 +58,43 @@ module.exports.updateUserInstance = async (req, res, next) => {
       params: { idUser },
     } = req;
     const userInstance = await User.findByPk(idUser);
-    const updatedUserInstance = await userInstance.update(body);
-    updatedUserInstance.password = undefined;
-    res.status(200).send({ data: updatedUserInstance });
+    if (userInstance) {
+      const updatedUserInstance = await userInstance.update(body);
+      updatedUserInstance.password = undefined;
+      return res.status(200).send({ data: updatedUserInstance });
+    }
+    res.status(404).send({ data: 'user not exists' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.deleteUserStatic = async (req, res, next) => {
+  try {
+    const {
+      query: { male },
+    } = req;
+    const count = await User.destroy({
+      where: { isMale: male },
+    });
+    res.status(200).send({ data: count });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.deleteUserInstance = async (req, res, next) => {
+  try {
+    const {
+      body,
+      params: { idUser },
+    } = req;
+    const userInstance = await User.findByPk(idUser);
+    if (userInstance) {
+      const result = await userInstance.destroy();
+      return res.status(200).send({ data: userInstance });
+    }
+    res.status(404).send({ data: 'user not exists' });
   } catch (error) {
     next(error);
   }
