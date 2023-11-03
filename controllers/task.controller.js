@@ -12,15 +12,16 @@ module.exports.createTask = async (req, res, next) => {
 
 module.exports.getAllTasks = async (req, res, next) => {
   try {
-    const { userInstance } = req;
+    const { userInstance, pagination } = req;
     const tasks = await userInstance.getTasks({
-      where: {isDone: false},
+      where: { isDone: false },
       include: [
         {
           model: User,
-          attributes: ['email'] ,
+          attributes: ['email'],
         },
       ],
+      ...pagination,
     });
     if (tasks.length === 0) {
       return res.status(200).send({ data: 'empty' });
