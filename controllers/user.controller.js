@@ -4,6 +4,9 @@ module.exports.createUser = async (req, res, next) => {
   try {
     const { body } = req;
     const createdUser = await User.create(body);
+    if (!createdUser) {
+      return res.status(400).send({ data: 'Bad Request' });
+    }
     createdUser.password = undefined;
     res.status(201).send({ data: createdUser });
   } catch (error) {
