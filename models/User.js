@@ -9,6 +9,11 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Task, {
         foreignKey: 'userId'
       }); //UserId-> User_id -> user_id
+
+      User.belongsToMany(models.Group, {
+        through: 'users_to_groups',
+        foreignKey: 'userId'
+      })
     }
   }
   User.init(
