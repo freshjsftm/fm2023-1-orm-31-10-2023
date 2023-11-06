@@ -1,3 +1,4 @@
+const createError = require('http-errors');
 const { User } = require('../models');
 
 module.exports.createUser = async (req, res, next) => {
@@ -5,7 +6,7 @@ module.exports.createUser = async (req, res, next) => {
     const { body } = req;
     const createdUser = await User.create(body);
     if (!createdUser) {
-      return res.status(400).send({ data: 'Bad Request' });
+      return next(createError(400, 'User not created'));
     }
     createdUser.password = undefined;
     res.status(201).send({ data: createdUser });
@@ -23,6 +24,9 @@ module.exports.getAllUsers = async (req, res, next) => {
       },
       ...pagination,
     });
+    if(users.length === 0) {
+      return res.status(204).send({ data: 'users list is empty' });
+    }
     res.status(200).send({ data: users });
   } catch (error) {
     next(error);
@@ -33,6 +37,9 @@ module.exports.updateUserInstance = async (req, res, next) => {
   try {
     const { body, userInstance } = req;
     const updatedUserInstance = await userInstance.update(body);
+    if (!updatedUserInstance) {
+      return next(createError(404, 'User not updated'));
+    }
     updatedUserInstance.password = undefined;
     return res.status(200).send({ data: updatedUserInstance });
   } catch (error) {
