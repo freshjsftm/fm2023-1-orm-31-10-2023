@@ -4,6 +4,7 @@ const { checkUser } = require('../middlewares/users.mw');
 const paginate = require('../middlewares/paginate.mw');
 
 const userRouter = Router();
+//http://localhost:3000/api/users
 userRouter
   .route('/')
   .post(UserController.createUser)
