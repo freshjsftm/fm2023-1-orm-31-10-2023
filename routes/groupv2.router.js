@@ -8,4 +8,10 @@ groupV2Router
   .post(groupController.createGroupV2)
   .get(groupController.getAllGroupsV2);
 
+//http://localhost:3000/api/users/18/groups/4
+groupV2Router
+  .route('/:idGroup')
+  .post(groupController.addUserToGroupV2)
+
+
 module.exports = groupV2Router;

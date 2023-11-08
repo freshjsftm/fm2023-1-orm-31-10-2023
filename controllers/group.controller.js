@@ -116,6 +116,27 @@ module.exports.addUserToGroupV1 = async (req, res, next) => {
 };
 module.exports.addUserToGroupV2 = async (req, res, next) => {
   try {
+    const {
+      userInstance,
+      params: { idGroup },
+    } = req;
+    const group = await Group.findByPk(idGroup);
+    if (!group) {
+      return next(createError(404, 'Group not found'));
+    }
+    await group.addUser(userInstance);
+    const groupWithUsers = await Group.findByPk(idGroup, {
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'email'],
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
+    res.status(201).send({ data: groupWithUsers });
   } catch (error) {
     next(error);
   }
