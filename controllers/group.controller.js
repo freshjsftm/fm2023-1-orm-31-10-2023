@@ -4,6 +4,28 @@ const { Group, User } = require('../models');
 const attrsV1 = ['name', 'imagePath', 'description', 'userId'];
 const attrsV2 = ['name', 'imagePath', 'description'];
 
+module.exports.addImage = async (req, res, next) => {
+  try {
+    const {
+      file: { filename },
+      params: { idGroup },
+    } = req;
+    const [count, [updateGroup]] = await Group.update(
+      { imagePath: filename },
+      {
+        where: { id: idGroup },
+        returning: true,
+      }
+    );
+    if (!updateGroup) {
+      return next(404, 'Group not found');
+    }
+    res.status(200).send({ data: updateGroup });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports.createGroupV1 = async (req, res, next) => {
   try {
     const { body } = req;
@@ -119,6 +141,34 @@ module.exports.addUserToGroupV2 = async (req, res, next) => {
     const {
       userInstance,
       params: { idGroup },
+    } = req;
+    const group = await Group.findByPk(idGroup);
+    if (!group) {
+      return next(createError(404, 'Group not found'));
+    }
+    await group.addUser(userInstance);
+    const groupWithUsers = await Group.findByPk(idGroup, {
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'email'],
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
+    res.status(201).send({ data: groupWithUsers });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.addUserToGroupV2Body = async (req, res, next) => {
+  try {
+    const {
+      userInstance,
+      body: { idGroup },
     } = req;
     const group = await Group.findByPk(idGroup);
     if (!group) {

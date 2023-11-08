@@ -4,7 +4,10 @@ const handleErrors = require('./handleErrors');
 
 const app = express();
 
+app.use(express.static('public'));
+
 app.use(express.json());
+
 //http://localhost:3000
 app.use('/api', router);
 
