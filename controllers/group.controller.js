@@ -60,19 +60,19 @@ module.exports.getAllGroupsV1 = async (req, res, next) => {
     const {
       params: { idUser },
     } = req;
-    const userWithGroups = await User.findByPk(idUser,{
-      attributes:{
-        exclude: ['password']
+    const userWithGroups = await User.findByPk(idUser, {
+      attributes: {
+        exclude: ['password'],
       },
-      include:[
+      include: [
         {
           model: Group,
-          attributes: ['id','name'],
+          attributes: ['id', 'name'],
           through: {
-            attributes: []
-          }
-        }
-      ]
+            attributes: [],
+          },
+        },
+      ],
     });
     if (!userWithGroups) {
       return next(createError(404, 'User not found'));
@@ -83,4 +83,40 @@ module.exports.getAllGroupsV1 = async (req, res, next) => {
   }
 };
 
-
+module.exports.addUserToGroupV1 = async (req, res, next) => {
+  try {
+    const {
+      params: { idGroup },
+      body: { userId },
+    } = req;
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return next(createError(404, 'User not found'));
+    }
+    const group = await Group.findByPk(idGroup);
+    if (!group) {
+      return next(createError(404, 'Group not found'));
+    }
+    await group.addUser(user);
+    const groupWithUsers = await Group.findByPk(idGroup, {
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'email'],
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
+    res.status(201).send({ data: groupWithUsers });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports.addUserToGroupV2 = async (req, res, next) => {
+  try {
+  } catch (error) {
+    next(error);
+  }
+};
