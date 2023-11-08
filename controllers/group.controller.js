@@ -28,8 +28,11 @@ module.exports.addImage = async (req, res, next) => {
 
 module.exports.createGroupV1 = async (req, res, next) => {
   try {
-    const { body } = req;
-    const values = _.pick(body, attrsV1);
+    const { body, file } = req;
+    let values = _.pick(body, attrsV1);
+    if(file){
+      values = {...values, imagePath: file.filename }
+    }
     //отримати перевірити юзера на існування
     const user = await User.findByPk(values.userId);
     if (!user) {
