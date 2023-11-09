@@ -17,6 +17,19 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png') {
+    return cb(new Error('Wrong mimetype'));
+  }
+  cb(null, true);
+};
 
-module.exports.singleUpload = (name)=>upload.single(name);
+const upload = multer({
+  storage,
+  fileFilter,
+  limits:{
+    fileSize: 5*1024*1024 //5Mb
+  }
+});
+
+module.exports.singleUpload = (name) => upload.single(name);
