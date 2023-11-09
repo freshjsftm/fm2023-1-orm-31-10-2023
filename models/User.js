@@ -3,12 +3,11 @@ const { isAfter } = require('date-fns');
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    //User -> Users -> users
+
     static associate(models) {
-      // define association here
       User.hasMany(models.Task, {
         foreignKey: 'userId'
-      }); //UserId-> User_id -> user_id
+      }); 
 
       User.belongsToMany(models.Group, {
         through: 'users_to_groups',
@@ -18,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
   }
   User.init(
     {
+      avatar:{
+        type: DataTypes.TEXT,
+      },
       firstName: {
         type: DataTypes.STRING(64),
         allowNull: false,
