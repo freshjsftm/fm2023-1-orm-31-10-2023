@@ -2,18 +2,20 @@ const { Router } = require('express');
 const UserController = require('../controllers/user.controller');
 const { checkUser } = require('../middlewares/users.mw');
 const paginate = require('../middlewares/paginate.mw');
+const { singleUpload } = require('../middlewares/upload.mw');
 
 const userRouter = Router();
-//http://localhost:3000/api/users
+
 userRouter
   .route('/')
-  .post(UserController.createUser)
+  .post(singleUpload('avatar'), UserController.createUser)
   .get(paginate, UserController.getAllUsers);
 
 userRouter
   .route('/:idUser')
   .all(checkUser)
-  .patch(UserController.updateUserInstance)
+  .get(UserController.getUser)
+  .patch(singleUpload('avatar'), UserController.updateUserInstance)
   .delete(UserController.deleteUserInstance);
 
 module.exports = userRouter;
