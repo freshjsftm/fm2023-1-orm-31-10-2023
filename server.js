@@ -1,7 +1,8 @@
 const http = require('http');
 const app = require('./app.js');
+const { PORT } = require('./constants.js');
 
-const port = process.env.PORT || 3000; //http 80   https 443
+const port = process.env.PORT || PORT; 
 
 const server = http.createServer(app);
 

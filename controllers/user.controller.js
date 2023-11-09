@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const { User } = require('../models');
+//const attr = [];
 
 module.exports.createUser = async (req, res, next) => {
   try {
@@ -56,10 +57,3 @@ module.exports.deleteUserInstance = async (req, res, next) => {
     next(error);
   }
 };
-
-// module.exports.name = async (req, res, next) => {
-//   try {
-//   } catch (error) {
-//     next(error);
-//   }
-// };
